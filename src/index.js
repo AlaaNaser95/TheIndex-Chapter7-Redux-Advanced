@@ -2,13 +2,33 @@ import React from "react";
 import ReactDOM from "react-dom";
 import { BrowserRouter } from "react-router-dom";
 import registerServiceWorker from "./registerServiceWorker";
-
+import { applyMiddleware } from "redux";
+import thunk from "redux-thunk";
 import App from "./App";
+import { compose } from "redux";
+import { createStore, combineReducers } from "redux";
+import authorReducer from "./store/reducers/author";
+import authorsReducer from "./store/reducers/authors";
+import { Provider } from "react-redux";
+
+const rootReducer = combineReducers({
+  rootauth: authorReducer,
+  rootauths: authorsReducer
+});
+
+const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
+
+const store = createStore(
+  rootReducer,
+  composeEnhancers(applyMiddleware(thunk))
+);
 
 ReactDOM.render(
-  <BrowserRouter>
-    <App />
-  </BrowserRouter>,
+  <Provider store={store}>
+    <BrowserRouter>
+      <App />
+    </BrowserRouter>
+  </Provider>,
   document.getElementById("root")
 );
 registerServiceWorker();
