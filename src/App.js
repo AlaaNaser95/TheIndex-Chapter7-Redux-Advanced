@@ -1,13 +1,14 @@
 import React, { Component } from "react";
-import { Switch, Route, Redirect } from "react-router-dom";
 
 // Components
 import Sidebar from "./Sidebar";
 import Loading from "./Loading";
 import AuthorsList from "./AuthorsList";
 import AuthorDetail from "./AuthorDetail";
+
 import { connect } from "react-redux";
 import * as actionCreators from "./store/actions/index";
+import { Switch, Route, Redirect, withRouter } from "react-router-dom";
 
 class App extends Component {
   constructor(props) {
@@ -22,18 +23,13 @@ class App extends Component {
 
   getView() {
     if (this.props.loading) {
-      <Loading />;
+      return <Loading />;
     } else {
       return (
         <Switch>
           <Redirect exact from="/" to="/authors" />
           <Route path="/authors/:authorID" component={AuthorDetail} />
-          <Route
-            path="/authors/"
-            render={props => (
-              <AuthorsList authors={this.props.authors} {...props} />
-            )}
-          />
+          <Route path="/authors/" component={AuthorsList} />
         </Switch>
       );
     }
@@ -65,7 +61,9 @@ const mapDispatchToProps = dispatch => {
   };
 };
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(App);
+export default withRouter(
+  connect(
+    mapStateToProps,
+    mapDispatchToProps
+  )(App)
+);

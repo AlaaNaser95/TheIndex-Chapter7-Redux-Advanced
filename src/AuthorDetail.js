@@ -4,45 +4,19 @@ import axios from "axios";
 // Components
 import BookTable from "./BookTable";
 import Loading from "./Loading";
-
-const instance = axios.create({
-  baseURL: "https://the-index-api.herokuapp.com"
-});
+import { connect } from "react-redux";
+import * as actionCreators from "./store/actions/index";
 
 class AuthorDetail extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      author: {},
-      loading: true
-    };
-  }
-
   componentDidMount() {
-    this.getAuthor();
-  }
-
-  componentDidUpdate(prevProps) {
-    if (prevProps.match.params.authorID !== this.props.match.params.authorID) {
-      this.getAuthor();
-    }
-  }
-
-  getAuthor() {
-    const authorID = this.props.match.params.authorID;
-    this.setState({ loading: true });
-    instance
-      .get(`/api/authors/${authorID}`)
-      .then(res => res.data)
-      .then(author => this.setState({ author: author, loading: false }))
-      .catch(err => console.error(err));
+    this.props.onFetchAuthor(this.props.match.params.authorID);
   }
 
   render() {
-    if (this.state.loading) {
+    if (this.props.loading) {
       return <Loading />;
     } else {
-      const author = this.state.author;
+      const author = this.props.author;
       return (
         <div className="author">
           <div>
@@ -60,4 +34,18 @@ class AuthorDetail extends Component {
   }
 }
 
-export default AuthorDetail;
+const mapStateToProps = state => {
+  return {
+    author: state.rootauth.author,
+    loading: state.rootauth.loading
+  };
+};
+const mapDispatchToProps = dispatch => {
+  return {
+    onFetchAuthor: id => dispatch(actionCreators.fetchAuthorDetail(id))
+  };
+};
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(AuthorDetail);

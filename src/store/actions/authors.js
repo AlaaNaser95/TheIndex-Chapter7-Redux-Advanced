@@ -15,8 +15,9 @@ export const fetchAuthors = () => {
   };
 };
 
-export const filterAuthors = () => {
+export const filterAuthors = query => {
   return {
-    type: actionCreators.FILTER_AUTHORS
+    type: actionCreators.FILTER_AUTHORS,
+    payload: query
   };
 };
